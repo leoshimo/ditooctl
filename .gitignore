@@ -1,0 +1,17 @@
+.DS_Store
+.venv/
+__pycache__/
+node_modules/
+.build/
+target/
+.env
+dist/
+# Local hardware observations and personal artwork stay outside releases.
+docs/audio-research.md
+docs/slots-research.md
+docs/investigation.md
+docs/capabilities.md
+docs/cli-design.md
+tools/research/
+assets/openai-blossom/
+tools/render-blossom.cjs
