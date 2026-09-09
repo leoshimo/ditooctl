@@ -11,13 +11,14 @@ brew upgrade leoshimo/tap/ditooctl
 
 Homebrew installs a compiled binary. Swift and Xcode are not required to run it. [Release archives](https://github.com/leoshimo/ditooctl/releases) include a standalone installer.
 
-Pair **Ditoo-audio** in System Settings → Bluetooth on the Mac that will control it. Allow Bluetooth access for the terminal or host application when macOS asks.
+Pair **Ditoo-audio** on the Mac that will control it, using `device pair` below or System Settings → Bluetooth. Allow Bluetooth access for the terminal or host application when macOS asks.
 
 ## Use
 
 ```sh
 ditooctl device list --scan
 ditooctl device add desk AA:BB:CC:DD:EE:FF
+ditooctl device pair desk
 
 ditooctl status --json
 ditooctl brightness 60
@@ -33,6 +34,8 @@ ditooctl text "BUILD COMPLETE" --scroll
 ```
 
 The first added device becomes the default if none is configured. Use `device use NAME` to change it or `--device NAME_OR_ADDRESS` for one command. `device remove NAME` forgets the local name without unpairing.
+
+`device pair [NAME_OR_ADDRESS]` starts Bluetooth pairing on this Mac; omit the target to use the default. Already-paired devices return immediately. PIN/code confirmation, if needed, requires an interactive terminal. Disconnect the Ditoo from another host if it cannot be found. Bluetooth permission and pairing belong to the hosting Mac; an SSH session may not be able to show permission prompts.
 
 Omit the value from `brightness` or `mode` to read it. Modes: `clock`, `light`, `gallery`, `visualizer`, `custom`, `off`. Clock/light accept `--color RRGGBB`; other settings are preserved from a live read. `off` blanks the display without turning off the speaker.
 
@@ -53,7 +56,7 @@ Only names, addresses, and the default are saved in `$XDG_DATA_HOME/ditooctl/dev
 ```sh
 swift build -c release --product ditooctl
 ./scripts/install.sh                  # ~/.local/bin
-./scripts/package.sh 0.1.2            # universal release; requires Xcode
+./scripts/package.sh 0.1.3            # universal release; requires Xcode
 ```
 
 [Distribution workflow](docs/distribution.md). Code: MIT.

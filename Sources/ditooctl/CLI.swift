@@ -112,6 +112,7 @@ enum CLI {
         let selected = try DeviceStore().resolve(args.values["--device"])
         let deadline = CommandDeadline()
         defer { deadline.cancel() }
+        try BluetoothAccess.require()
         // Do not create an unpaired IOBluetoothDevice and ask for its name: that
         // lookup can hang while resolving a remote address. Pairing is explicit.
         let paired = IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] ?? []
@@ -119,7 +120,7 @@ enum CLI {
             guard let raw = $0.addressString else { return false }
             return (try? normalizedAddress(raw)) == selected.address
         }) else {
-            throw DivoomError("\(selected.address) is not paired on this Mac. Pair Ditoo-audio in System Settings → Bluetooth and allow Bluetooth access for the host application.")
+            throw DivoomError("\(selected.address) is not paired on this Mac. Run 'ditooctl device pair \(selected.name ?? selected.address)' or pair Ditoo-audio in System Settings → Bluetooth.")
         }
         guard (device.name ?? "").lowercased().contains("ditoo") else {
             throw DivoomError("\(selected.address) is not identified as a Ditoo on this Mac. Pair it in System Settings → Bluetooth, then retry.")
@@ -160,13 +161,29 @@ enum CLI {
     static func registry(_ words: [String], args: Arguments, json: Bool) throws {
         try args.allow(["--scan"])
         guard args.values["--device"] == nil else { throw UsageError("--device does not apply to device registry commands.") }
-        guard let action = words.first else { throw UsageError("Use device list|add|use|remove. See device --help.") }
+        guard let action = words.first else { throw UsageError("Use device list|add|pair|use|remove. See device --help.") }
         if args.flags.contains("--scan"), action != "list" { throw UsageError("--scan applies only to device list.") }
         let store = try DeviceStore()
+        if action == "pair" {
+            guard words.count <= 2 else { throw UsageError("Use device pair [NAME_OR_ADDRESS]. Omit the target to pair the default device.") }
+            let selected = try store.resolve(words.dropFirst().first)
+            let deadline = CommandDeadline()
+            defer { deadline.cancel() }
+            try BluetoothAccess.require()
+            let device = try deviceAt(selected.address)
+            let alreadyPaired = try Pairing().run(device, address: selected.address)
+            try output(["action": "pair", "name": selected.name as Any? ?? NSNull(),
+                        "address": selected.address, "paired": true, "already_paired": alreadyPaired],
+                       json: json, text: "\(alreadyPaired ? "Already paired" : "Paired"): \(selected.name ?? selected.address) on this Mac.")
+            return
+        }
         var config = try store.read()
         switch action {
         case "list":
             guard words.count == 1 else { throw UsageError("Use device list [--scan].") }
+            let deadline = CommandDeadline()
+            defer { deadline.cancel() }
+            try BluetoothAccess.require()
             let inventory: [IOBluetoothDevice]
             if args.flags.contains("--scan") { inventory = try Discovery().run(seconds:8, all:false, printResults:false) }
             else { inventory = (IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] ?? []).filter(candidate) }

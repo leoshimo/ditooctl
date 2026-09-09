@@ -9,7 +9,7 @@ let package = Package(
     targets: [
         .target(name: "DivoomProtocol"),
         .executableTarget(name: "ditooctl", dependencies: ["DivoomProtocol"],
-            linkerSettings: [.linkedFramework("IOBluetooth"), .linkedFramework("AppKit"),
+            linkerSettings: [.linkedFramework("IOBluetooth"), .linkedFramework("CoreBluetooth"), .linkedFramework("AppKit"),
                 .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", root + "/Info.plist"])])
     ]
 )

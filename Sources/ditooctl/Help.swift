@@ -1,6 +1,6 @@
 import Foundation
 
-let version = "0.1.2"
+let version = "0.1.3"
 let help = """
 ditooctl \(version) — a direct remote for the original Divoom Ditoo
 
@@ -8,6 +8,7 @@ Usage: ditooctl [--device NAME_OR_ADDRESS] [--json] [--verbose] COMMAND
 
   device list [--scan]        List saved and paired Ditoos; optionally discover
   device add NAME ADDRESS    Save a name; use as default if none is configured
+  device pair [NAME_OR_ADDRESS]  Pair on this Mac; omit target to use the default
   device use NAME            Change the default
   device remove NAME         Forget the local name (keeps Bluetooth pairing)
   status                     Read live display settings
@@ -31,10 +32,11 @@ Commands connect, operate, and exit. Uploaded GIFs loop without a controller.
 
 let commandHelp: [String: String] = [
 "device": """
-Manage local names and the default device.
+Manage local names, the default device, and Bluetooth pairing on this Mac.
 
   ditooctl device list [--scan] [--json]
   ditooctl device add NAME ADDRESS
+  ditooctl device pair [NAME_OR_ADDRESS]
   ditooctl device use NAME
   ditooctl device remove NAME
 
@@ -46,9 +48,21 @@ list shows saved names plus paired Ditoos from macOS; --scan searches nearby
 for 8 seconds (name resolution can add 15 seconds). Inventory connection flags
 are macOS metadata, not a successful control-channel check; use status for that.
 
-Pair the device in System Settings → Bluetooth on the Mac that will control it.
-add does not pair or contact it. It saves no brightness, mode, or artwork.
---device does not apply to these local registry commands.
+pair starts a native macOS pairing attempt. Use a saved name, a Bluetooth address,
+or omit the target to use the default. It does not save an alias or change the
+default. Already-paired devices succeed without pairing again. Success requires
+macOS to report paired=true; it does not prove the display control channel works.
+
+Keep the Ditoo on and discoverable. Disconnect its active link to another host
+if it cannot be found. macOS may ask for Bluetooth permission on the hosting Mac.
+If pairing requires a PIN or code comparison, the CLI prompts in an interactive
+terminal (30 seconds per response); noninteractive calls fail instead of guessing.
+Progress/prompts use stderr; --json returns one result on stdout. Pairing waits
+up to 60 seconds, with a 90-second overall limit including permission/OS lookups.
+System Settings → Bluetooth remains an alternative. Pairing is separate per Mac.
+
+add only saves a local name; it does not pair or contact the device.
+--device does not apply to these commands; use their NAME_OR_ADDRESS argument.
 """,
 "status": """
 Read live display state from the selected device.
