@@ -151,7 +151,10 @@ enum CLI {
             try output(["device":identity,"brightness":actual],json:json,text:String(actual))
         case "show", "text":
             try upload(packets,command:uploadCommand,connection:connection)
-            var result: [String:Any] = ["device":identity,"acknowledged":true,"playback":uploadCommand == 0x49 ? "repeat" : "still"]
+            // Upload acknowledgement alone does not select the artwork when
+            // the device is in another mode. Confirm the visible channel too.
+            _ = try setMode("custom", color:nil, connection:connection)
+            var result: [String:Any] = ["device":identity,"acknowledged":true,"mode":"custom","playback":uploadCommand == 0x49 ? "repeat" : "still"]
             if let media { result["media"] = media.info }
             try output(result,json:json,text:uploadCommand == 0x49 ? "Animation acknowledged; playback repeats on the device." : "Image acknowledged.")
         default: break

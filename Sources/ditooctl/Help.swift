@@ -1,6 +1,6 @@
 import Foundation
 
-let version = "0.1.3"
+let version = "0.1.4"
 let help = """
 ditooctl \(version) — a direct remote for the original Divoom Ditoo
 
@@ -136,7 +136,7 @@ Encoded animation data must fit 51,200 bytes; compressed file size is unrelated.
 These are encoder limits, not measured firmware maxima. APNG is not supported.
 
 Uploads select the custom display, preserve global brightness, and require a
-device acknowledgement. GIFs repeat after this command exits; finite GIF loop
+device acknowledgement plus custom-mode readback. GIFs repeat after this command exits; finite GIF loop
 counts are ignored. Another image/mode replaces playback. Ordinary uploads alone
 have not been isolated for power-cycle retention; there is no persistent-slot API.
 

@@ -56,7 +56,7 @@ Only names, addresses, and the default are saved in `$XDG_DATA_HOME/ditooctl/dev
 ```sh
 swift build -c release --product ditooctl
 ./scripts/install.sh                  # ~/.local/bin
-./scripts/package.sh 0.1.3            # universal release; requires Xcode
+./scripts/package.sh 0.1.4            # universal release; requires Xcode
 ```
 
 [Distribution workflow](docs/distribution.md). Code: MIT.
