@@ -30,12 +30,11 @@ ditooctl show animation.gif
 
 ditooctl text "42"
 ditooctl text "BUILD COMPLETE" --scroll
-ditooctl keyboard next
 ```
 
 The first added device becomes the default if none is configured. Use `device use NAME` to change it or `--device NAME_OR_ADDRESS` for one command. `device remove NAME` forgets the local name without unpairing.
 
-Omit the value from `brightness` or `mode` to read it. Modes: `clock`, `light`, `gallery`, `visualizer`, `custom`, `off`. Clock/light accept `--color RRGGBB`; other settings are preserved from a live read. `off` blanks the display without turning off the speaker. `keyboard toggle|next|previous` changes the backlight; its current state is not readable.
+Omit the value from `brightness` or `mode` to read it. Modes: `clock`, `light`, `gallery`, `visualizer`, `custom`, `off`. Clock/light accept `--color RRGGBB`; other settings are preserved from a live read. `off` blanks the display without turning off the speaker. `keyboard toggle|previous` changes the backlight; its current state is not readable.
 
 ## Media and output
 
@@ -54,7 +53,7 @@ Only names, addresses, and the default are saved in `$XDG_DATA_HOME/ditooctl/dev
 ```sh
 swift build -c release --product ditooctl
 ./scripts/install.sh                  # ~/.local/bin
-./scripts/package.sh 0.1.0            # universal release; requires Xcode
+./scripts/package.sh 0.1.1            # universal release; requires Xcode
 ```
 
 [Distribution workflow](docs/distribution.md). Code: MIT.
