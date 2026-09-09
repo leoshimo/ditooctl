@@ -106,8 +106,6 @@ enum CLI {
                 let frames = try offsets.map { try label(input, offset:$0, color:ink) }
                 packets = try Divoom.animation(frames, milliseconds:130 * step); uploadCommand = 0x49
             } else { packets = [try Divoom.image(label(input, color:ink))] }
-        case "keyboard":
-            try args.allow(); guard words.count == 1, ["toggle","previous"].contains(words[0]) else { throw UsageError("Use keyboard toggle|previous. Keyboard state cannot currently be read.") }
         default: throw UsageError("Unknown command '\(command)'. Use --help.")
         }
 
@@ -155,10 +153,6 @@ enum CLI {
             var result: [String:Any] = ["device":identity,"acknowledged":true,"playback":uploadCommand == 0x49 ? "repeat" : "still"]
             if let media { result["media"] = media.info }
             try output(result,json:json,text:uploadCommand == 0x49 ? "Animation acknowledged; playback repeats on the device." : "Image acknowledged.")
-        case "keyboard":
-            let action: UInt8 = ["previous":0,"toggle":2][words[0]]!
-            _ = try requestReply(connection,packet:Divoom.packet([0x23,action]),command:0x23)
-            try output(["device":identity,"action":words[0],"acknowledged":true,"state":NSNull()],json:json,text:"Keyboard \(words[0]) acknowledged. Current lighting state is unavailable.")
         default: break
         }
     }

@@ -34,7 +34,7 @@ ditooctl text "BUILD COMPLETE" --scroll
 
 The first added device becomes the default if none is configured. Use `device use NAME` to change it or `--device NAME_OR_ADDRESS` for one command. `device remove NAME` forgets the local name without unpairing.
 
-Omit the value from `brightness` or `mode` to read it. Modes: `clock`, `light`, `gallery`, `visualizer`, `custom`, `off`. Clock/light accept `--color RRGGBB`; other settings are preserved from a live read. `off` blanks the display without turning off the speaker. `keyboard toggle|previous` changes the backlight; its current state is not readable.
+Omit the value from `brightness` or `mode` to read it. Modes: `clock`, `light`, `gallery`, `visualizer`, `custom`, `off`. Clock/light accept `--color RRGGBB`; other settings are preserved from a live read. `off` blanks the display without turning off the speaker.
 
 ## Media and output
 
@@ -46,14 +46,14 @@ Each command connects, operates, and exits. Uploaded animations keep looping. Or
 
 `--json` writes one JSON value to stdout. Errors use stderr and a nonzero exit status. `--verbose` adds Bluetooth diagnostics. Hardware operations stop after 90 seconds at most and do not retry uncertain writes. Close competing phone apps/controllers if a connection times out.
 
-Only names, addresses, and the default are saved in `$XDG_DATA_HOME/ditooctl/devices.json` (default `~/.local/share/ditooctl/devices.json`). Display state is read live; unavailable values stay unknown. Status cannot retrieve displayed pixels, filenames, or keyboard state.
+Only names, addresses, and the default are saved in `$XDG_DATA_HOME/ditooctl/devices.json` (default `~/.local/share/ditooctl/devices.json`). Display state is read live; unavailable values stay unknown. Status cannot retrieve displayed pixels or filenames.
 
 ## Build
 
 ```sh
 swift build -c release --product ditooctl
 ./scripts/install.sh                  # ~/.local/bin
-./scripts/package.sh 0.1.1            # universal release; requires Xcode
+./scripts/package.sh 0.1.2            # universal release; requires Xcode
 ```
 
 [Distribution workflow](docs/distribution.md). Code: MIT.

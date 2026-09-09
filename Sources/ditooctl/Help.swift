@@ -1,6 +1,6 @@
 import Foundation
 
-let version = "0.1.1"
+let version = "0.1.2"
 let help = """
 ditooctl \(version) — a direct remote for the original Divoom Ditoo
 
@@ -15,11 +15,9 @@ Usage: ditooctl [--device NAME_OR_ADDRESS] [--json] [--verbose] COMMAND
   mode [MODE] [--color RGB]   Read or select a mode, preserving its settings
   show FILE [--check]         Upload a 16×16 PNG/GIF, or validate it offline
   text TEXT [--scroll]        Display short text or upload scrolling text
-  keyboard ACTION            Toggle backlight, or select the previous effect
 
 Modes: clock, light, gallery, visualizer, custom, off.
 --color uses RRGGBB and applies to clock/light. off blanks the screen only.
-keyboard actions: toggle, previous (state cannot be read).
 
 Use COMMAND --help or help COMMAND for formats, limits, examples, and semantics.
 --json produces machine-readable output; diagnostics always go to stderr.
@@ -62,7 +60,7 @@ Returns device name/address, successful communication, reported mode, brightness
 and settings for the reported mode. Missing/unknown values are null, never cached.
 Mode settings include clock color/style/information options, or light color,
 brightness/effect. The report cannot retrieve displayed pixels or a filename,
-battery/firmware, keyboard state, or reliably describe every temporary overlay.
+battery/firmware, or reliably describe every temporary overlay.
 The physical Sun-key blank screen can still report its underlying mode.
 No reply is an error. --json writes one object to stdout; diagnostics use stderr.
 Hardware operations have an overall 90-second deadline, including macOS lookups.
@@ -150,17 +148,5 @@ fails before connecting. Quote TEXT as one shell argument (use -- before a value
 beginning with '-'). Scrolling uses up to 60 frames at 130 ms per pixel of travel;
 long strings move several pixels per frame to keep the complete text in the loop.
 Text replaces the current custom artwork. Scripts own counters/timers/state.
-""",
-"keyboard": """
-Control the Ditoo keyboard's backlight.
-
-  ditooctl keyboard toggle
-  ditooctl keyboard previous
-
-toggle switches the backlight; previous selects the preceding built-in effect. These are
-Ditoo-specific relative commands. No verified state query, explicit on/off,
-RGB color, or brightness setter is available. The reply confirms receipt only;
---json returns acknowledged=true and state=null. The CLI never retries these
-relative actions after a write, since repeating toggle would reverse it.
 """
 ]
